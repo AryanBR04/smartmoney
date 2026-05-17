@@ -92,9 +92,9 @@ export default function App() {
   const fetchData = async () => {
     try {
       const [txRes, predRes, healthRes] = await Promise.all([
-        axios.get('http://127.0.0.1:5000/api/transactions'),
-        axios.get('http://127.0.0.1:5000/api/predict'),
-        axios.get('http://127.0.0.1:5000/api/health')
+        axios.get('/api/transactions'),
+        axios.get('/api/predict'),
+        axios.get('/api/health')
       ]);
       setTransactions(txRes.data);
       setPrediction(predRes.data);
@@ -118,12 +118,12 @@ export default function App() {
     if (!title || !amount) { alert("Please fill fields"); return; }
     const finalCategory = type === 'income' ? 'Salary' : category;
     const newTx = { title, amount: parseFloat(amount), category: finalCategory, type, date: new Date().toISOString().split('T')[0] };
-    await axios.post('http://127.0.0.1:5000/api/transactions', newTx);
+    await axios.post('/api/transactions', newTx);
     setTitle(''); setAmount(''); setIsModalOpen(false); fetchData();
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://127.0.0.1:5000/api/transactions/${id}`);
+    await axios.delete(`/api/transactions/${id}`);
     fetchData();
   };
 
@@ -137,7 +137,7 @@ export default function App() {
       ];
       for (const tx of dummyData) {
         const newTx = { ...tx, date: new Date().toISOString().split('T')[0] };
-        await axios.post('http://127.0.0.1:5000/api/transactions', newTx);
+        await axios.post('/api/transactions', newTx);
       }
       setSyncStatus('success');
       fetchData();
@@ -152,7 +152,7 @@ export default function App() {
     formData.append('file', file);
     try {
       setSyncStatus('syncing');
-      await axios.post('http://127.0.0.1:5000/api/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post('/api/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSyncStatus('success');
       fetchData();
       setTimeout(() => { setIsLinkModalOpen(false); setSyncStatus('idle'); setFile(null); }, 2000);
